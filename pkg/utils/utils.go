@@ -8,8 +8,8 @@ import (
 
 // Creation of file and writing a deck to this file
 
-func WriteGeneratedDeck(deckKeyes []string) {
-	fo, err := os.Create("input_deck.txt")
+func WriteGeneratedDeck(deckKeyes []string, textFile string) {
+	fo, err := os.Create(textFile)
 	if err != nil {
 		panic(err)
 	}
@@ -66,4 +66,25 @@ func ReadText(textFile string) string {
 		input += fileScanner.Text()
 	}
 	return input
+}
+
+// Write to provided txt file
+func WriteText(text string, textFile string) {
+	fo, err := os.Create(textFile)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := fo.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	for i := range text {
+		_, err := fo.WriteString(string(text[i]))
+		if err != nil {
+			panic(err)
+		}
+	}
 }

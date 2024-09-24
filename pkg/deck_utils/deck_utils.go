@@ -5,14 +5,14 @@ import (
 	"strings"
 )
 
-var suits = map[string]int{
+var suitsMap = map[string]int{
 	"clubs":    0,
 	"diamonds": 13,
 	"hearts":   26,
 	"spades":   39,
 }
 
-var rank = map[string]int{
+var rankMap = map[string]int{
 	"A":  1,
 	"2":  2,
 	"3":  3,
@@ -33,14 +33,14 @@ var rank = map[string]int{
 func DeckGenerator(suit [4]string, rank [13]string) map[string]int {
 	deck := map[string]int{}
 	k := 1
-	for i := 0; i < len(suit); i++ {
-		for j := 0; j < len(rank); j++ {
+	for i := range suit {
+		for j := range rank {
 			deck[suit[i]+"-"+rank[j]] = k
 			k++
 		}
 	}
-	deck["JA"] = 0
-	deck["JB"] = 0
+	deck["JA"] = 53
+	deck["JB"] = 53
 	return deck
 }
 
@@ -230,7 +230,7 @@ func cardToNumber(card string) int {
 		number := 53
 		return number
 	} else {
-		number := suits[suitAndRank[0]] + rank[suitAndRank[1]]
+		number := suitsMap[suitAndRank[0]] + rankMap[suitAndRank[1]]
 		return number
 	}
 }

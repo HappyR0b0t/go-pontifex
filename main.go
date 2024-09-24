@@ -8,8 +8,6 @@ import (
 	"example.com/go-pontifex/pkg/utils"
 )
 
-var plainText = "Covering topics and trends in large scale system design from the authors of the best selling System Design Interview series."
-
 var alphabet = map[string]int{
 	"A": 1,
 	"B": 2,
@@ -68,25 +66,31 @@ var inverseAlphabet = map[int]string{
 	26: "Z",
 }
 
+var suit = [4]string{"clubs", "diamonds", "hearts", "spades"}
+
+var rank = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
+
 func main() {
 
-	// deck := deck_utils.DeckGenerator(suit, rank)
-
-	// deckKeyes := deck_utils.DeckShuffle(deck)
+	deck := deck_utils.DeckGenerator(suit, rank)
+	deckKeyes := deck_utils.DeckShuffle(deck)
+	utils.WriteGeneratedDeck(deckKeyes, "input_deck.txt")
 	// fmt.Println("INITIAL DECK ->", deckKeyes, "<- INITIAL DECK") // delete
 
 	plainText := utils.ReadText("input_text.txt")
 	// fmt.Println("PLAIN TEXT =", plainText)
 
-	cipheredText := CypherText(plainText, alphabet, inverseAlphabet)
+	cipheredText := CipherText(plainText, alphabet, inverseAlphabet)
 	fmt.Println("CIPHERED TEXT =", cipheredText)
+	utils.WriteText(cipheredText, "ciphered_text.txt")
 
-	decipheredText := DecypherText(cipheredText, alphabet)
+	decipheredText := DecipherText(cipheredText, alphabet)
 	fmt.Println("DECIPHERED TEXT =", decipheredText)
+	utils.WriteText(decipheredText, "deciphered_text.txt")
 
 }
 
-func CypherText(plainText string, alphabet map[string]int, inverseAlphabet map[int]string) string {
+func CipherText(plainText string, alphabet map[string]int, inverseAlphabet map[int]string) string {
 	var keyStream = []int{}
 	numberedText := text_utils.TextToNumber(plainText, alphabet)
 	inputDeck := utils.ReadDeck("input_deck.txt")
@@ -100,9 +104,9 @@ func CypherText(plainText string, alphabet map[string]int, inverseAlphabet map[i
 	return cipheredText
 }
 
-func DecypherText(cypheredText string, alphabet map[string]int) string {
+func DecipherText(cipheredText string, alphabet map[string]int) string {
 	var keyStream = []int{}
-	numberedText := text_utils.TextToNumber(cypheredText, alphabet)
+	numberedText := text_utils.TextToNumber(cipheredText, alphabet)
 	inputDeck := utils.ReadDeck("input_deck.txt")
 	_, keyStream = deck_utils.KeyStream(numberedText, &inputDeck, &keyStream)
 	keyes := text_utils.KeyToNumber(numberedText, keyStream)
