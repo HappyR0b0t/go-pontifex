@@ -4,20 +4,10 @@ import (
 	"strings"
 )
 
-// func AlphabetGenerator(alphabet string) map[string]int {
-// 	alphabetNumbers := make(map[string]int)
-
-// 	for i := 0; i < len(alphabet); i++ {
-// 		alphabetNumbers[alphabet[i]] += 1
-// 	}
-// 	fmt.Println(alphabetNumbers)
-// 	return alphabetNumbers
-// }
-
+// Converts text to numbers
 func TextToNumber(text string, alphabet map[string]int) []int {
 	text = strings.ToUpper(text)
 	text = strings.ReplaceAll(text, " ", "")
-	// fmt.Println("TEXT ->", text, "<- TEXT")
 	numbers := []int{}
 	for i := range text {
 		value := alphabet[string(text[i])]
@@ -26,6 +16,7 @@ func TextToNumber(text string, alphabet map[string]int) []int {
 	return numbers
 }
 
+// Converts numbers to key for the keystream
 func NumberToKey(numberedText []int, keyStream []int) []int {
 	keyes := []int{}
 	for i := range numberedText {
@@ -40,6 +31,7 @@ func NumberToKey(numberedText []int, keyStream []int) []int {
 	return keyes
 }
 
+// Converts keys from the keystream to numbers
 func KeyToNumber(numberedText []int, keyStream []int) []int {
 	keyes := []int{}
 	for i := range numberedText {
@@ -55,33 +47,9 @@ func KeyToNumber(numberedText []int, keyStream []int) []int {
 	return keyes
 }
 
-// func mapkey(m map[string]int, value int) (key string, ok bool) {
-// 	for k, v := range m {
-// 		if v == value {
-// 			key = k
-// 			ok = true
-// 			return
-// 		}
-// 	}
-// 	return
-// }
-
-// func KeyToText(keyes []int, inverseAlphabet map[int]string) []string {
-// 	text := []string{}
-// 	// fmt.Println(keyes)
-// 	for i := range keyes {
-// 		key, ok := mapkey(inverseAlphabet, keyes[i])
-// 		if !ok {
-// 			panic("value does not exist in map")
-// 		}
-// 		text = append(text, key)
-// 	}
-// 	return text
-// }
-
+// Converts keys from the keystream to chars
 func KeyToText(keyes []int, inverseAlphabet map[int]string) string {
 	var text string
-	// fmt.Println(keyes)
 	for i := range keyes {
 		key := inverseAlphabet[keyes[i]]
 		text += key

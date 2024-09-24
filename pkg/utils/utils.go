@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 )
 
@@ -62,7 +61,6 @@ func ReadText(textFile string) string {
 	var input string
 
 	for fileScanner.Scan() {
-		fmt.Println("INPUT TEXT ->", fileScanner.Text(), "<- INPUT TEXT")
 		input += fileScanner.Text()
 	}
 	return input

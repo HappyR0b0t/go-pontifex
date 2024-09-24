@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"example.com/go-pontifex/pkg/deck_utils"
 	"example.com/go-pontifex/pkg/text_utils"
 	"example.com/go-pontifex/pkg/utils"
@@ -75,21 +73,18 @@ func main() {
 	deck := deck_utils.DeckGenerator(suit, rank)
 	deckKeyes := deck_utils.DeckShuffle(deck)
 	utils.WriteGeneratedDeck(deckKeyes, "input_deck.txt")
-	// fmt.Println("INITIAL DECK ->", deckKeyes, "<- INITIAL DECK") // delete
 
 	plainText := utils.ReadText("input_text.txt")
-	// fmt.Println("PLAIN TEXT =", plainText)
 
 	cipheredText := CipherText(plainText, alphabet, inverseAlphabet)
-	fmt.Println("CIPHERED TEXT =", cipheredText)
 	utils.WriteText(cipheredText, "ciphered_text.txt")
 
 	decipheredText := DecipherText(cipheredText, alphabet)
-	fmt.Println("DECIPHERED TEXT =", decipheredText)
 	utils.WriteText(decipheredText, "deciphered_text.txt")
 
 }
 
+// A function to cipher provided text with provided deck
 func CipherText(plainText string, alphabet map[string]int, inverseAlphabet map[int]string) string {
 	var keyStream = []int{}
 	numberedText := text_utils.TextToNumber(plainText, alphabet)
@@ -98,12 +93,10 @@ func CipherText(plainText string, alphabet map[string]int, inverseAlphabet map[i
 	keyes := text_utils.NumberToKey(numberedText, keyStream)
 	cipheredText := text_utils.KeyToText(keyes, inverseAlphabet)
 
-	// fmt.Println("FINAL RESULT DECK ->", resultDeck, "<- FINAL RESULT DECK")
-	// fmt.Println("CYPHERED TEXT ->", cypheredText, "<- CYPHERED TEXT")
-
 	return cipheredText
 }
 
+// A function to decipher provided text with provided deck
 func DecipherText(cipheredText string, alphabet map[string]int) string {
 	var keyStream = []int{}
 	numberedText := text_utils.TextToNumber(cipheredText, alphabet)
@@ -111,9 +104,6 @@ func DecipherText(cipheredText string, alphabet map[string]int) string {
 	_, keyStream = deck_utils.KeyStream(numberedText, &inputDeck, &keyStream)
 	keyes := text_utils.KeyToNumber(numberedText, keyStream)
 	decipheredText := text_utils.KeyToText(keyes, inverseAlphabet)
-
-	// fmt.Println("FINAL RESULT DECK ->", resultDeck, "<- FINAL RESULT DECK")
-	// fmt.Println("FINAL TEXT ->", decypheredText, "<- FINAL TEXT")
 
 	return decipheredText
 }
