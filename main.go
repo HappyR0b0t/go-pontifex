@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"example.com/go-pontifex/pkg/deck_utils"
 	"example.com/go-pontifex/pkg/text_utils"
 	"example.com/go-pontifex/pkg/utils"
@@ -70,26 +72,41 @@ var rank = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q
 
 func main() {
 
-	deck := deck_utils.DeckGenerator(suit, rank)
-	deckKeyes := deck_utils.DeckShuffle(deck)
-	utils.WriteGeneratedDeck(deckKeyes, "input_deck.txt")
+	// deck := deck_utils.DeckGenerator(suit, rank)
+	// deckKeyes := deck_utils.DeckShuffle(deck)
+	// utils.WriteGeneratedDeck(deckKeyes, "input_deck.txt")
 
-	plainText := utils.ReadText("input_text.txt")
+	// Generate and write test_deck to *.txt file
+	testdeck := deck_utils.DeckArrayGenerator(suit, rank)
+	utils.WriteGeneratedDeck(testdeck, "test_input_deck.txt")
 
-	cipheredText := CipherText(plainText, alphabet, inverseAlphabet)
+	// plainText := utils.ReadText("input_text.txt")
+
+	// Ciphers plaintext
+	cipheredText := CipherText(alphabet, inverseAlphabet)
+	fmt.Println("CIPHERED TEXT =", cipheredText)
 	utils.WriteText(cipheredText, "ciphered_text.txt")
 
 	decipheredText := DecipherText(cipheredText, alphabet)
 	utils.WriteText(decipheredText, "deciphered_text.txt")
 
+	fmt.Println("DECIPHERED TEXT =", decipheredText)
+	if decipheredText != "A BCDEF GHIJK LMNOP QRSTU VWXYZ" {
+		fmt.Println("DECIPHERED TEXT != INPUT TEXT!")
+	} else {
+		fmt.Println("DECIPHERED TEXT == INPUT TEXT!")
+	}
+
 }
 
 // A function to cipher provided text with provided deck
-func CipherText(plainText string, alphabet map[string]int, inverseAlphabet map[int]string) string {
-	var keyStream = []int{}
+func CipherText(alphabet map[string]int, inverseAlphabet map[int]string) string {
+	plainText := utils.ReadText("input_text.txt")
+	inputDeck := utils.ReadDeck("test_input_deck.txt")
+
 	numberedText := text_utils.TextToNumber(plainText, alphabet)
-	inputDeck := utils.ReadDeck("input_deck.txt")
-	_, keyStream = deck_utils.KeyStream(numberedText, &inputDeck, &keyStream)
+	var textLength int = len(numberedText)
+	_, keyStream := deck_utils.KeyStream(textLength, &inputDeck)
 	keyes := text_utils.NumberToKey(numberedText, keyStream)
 	cipheredText := text_utils.KeyToText(keyes, inverseAlphabet)
 
@@ -98,10 +115,11 @@ func CipherText(plainText string, alphabet map[string]int, inverseAlphabet map[i
 
 // A function to decipher provided text with provided deck
 func DecipherText(cipheredText string, alphabet map[string]int) string {
-	var keyStream = []int{}
+	inputDeck := utils.ReadDeck("test_input_deck.txt")
+
 	numberedText := text_utils.TextToNumber(cipheredText, alphabet)
-	inputDeck := utils.ReadDeck("input_deck.txt")
-	_, keyStream = deck_utils.KeyStream(numberedText, &inputDeck, &keyStream)
+	var textLength int = len(numberedText)
+	_, keyStream := deck_utils.KeyStream(textLength, &inputDeck)
 	keyes := text_utils.KeyToNumber(numberedText, keyStream)
 	decipheredText := text_utils.KeyToText(keyes, inverseAlphabet)
 
