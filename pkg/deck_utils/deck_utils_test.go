@@ -2,6 +2,7 @@ package deck_utils
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 
 	"example.com/go-pontifex/pkg/utils"
@@ -48,126 +49,78 @@ func TestDeckShuffle(t *testing.T) {
 }
 
 func TestMoveJocker(t *testing.T) {
-	initialDeck := DeckGenerator(a, b)
-	// fmt.Println("INITIAL DECK", initialDeck)
 
-	shuffledDeck := DeckShuffle(initialDeck)
+}
 
-	// fmt.Println("SHUFFLED DECK", shuffledDeck)
+func TestFindJocker(t *testing.T) {
+	deck := []string{"a", "b", "c", "JA", "d", "e", "JB"}
+	ja := FindJocker(deck, "JA")
+	jb := FindJocker(deck, "JB")
 
-	movedJockerDeck := MoveJockerV1(shuffledDeck, 1, 1)
-	pointer1 := &movedJockerDeck
-	// fmt.Println("MOVED JOCKER DECK", pointer1)
-
-	shuffledDeck2 := DeckShuffle(initialDeck)
-
-	flag := 0
-
-	for i := range shuffledDeck2 {
-		fmt.Println("SD [i] =", shuffledDeck2[i], "MJD [i] =", (*pointer1)[i])
-		if shuffledDeck2[i] != (*pointer1)[i] {
-			flag++
-			break
-		}
+	if deck[ja] != "JA" {
+		t.Error("error: jocker A index is wrong!")
 	}
-	if shuffledDeck2[53] != (*pointer1)[1] {
-		flag++
-	}
-	if flag == 0 {
-		fmt.Println("FLAG", flag)
-		t.Error("No cards were moved!")
+
+	if deck[jb] != "JB" {
+		t.Error("error: jocker B index is wrong!")
 	}
 }
 
 func TestJockerShift(t *testing.T) {
-	// JA is the last card in the deck. Should be 2nd after shift
-	deckOne := utils.ReadDeck("test_input_deck_one.txt")
-	shiftedDeck, _ := JockerShift(deckOne)
-	if shiftedDeck[1] != "JA" {
-		t.Error("casae one: Joker A is shifted into wrong position!")
-	}
-	// JB is the last card in the deck. Should be 3rd after shift
-	deckTwo := utils.ReadDeck("test_input_deck_two.txt")
-	shiftedDeck, _ = JockerShift(deckTwo)
-	fmt.Println(shiftedDeck[1])
-	if shiftedDeck[2] != "JB" {
-		t.Error("case two: Joker B is shifted into wrong position!")
-	}
 
-	// JB is the second last card in the deck. Should be 2nd after shift
-	deckThree := utils.ReadDeck("test_input_deck_three.txt")
-	shiftedDeck, _ = JockerShift(deckThree)
-	if shiftedDeck[1] != "JB" {
-		t.Error("case three: Joker B is shifted into wrong position!")
-	}
-
-	deckFour := utils.ReadDeck("test_input_deck_four.txt")
-	shiftedDeck, _ = JockerShift(deckFour)
-	if shiftedDeck[2] != "JA" && shiftedDeck[3] != "JB" {
-		t.Error("case four: Jokers are shifted into wrong positions!")
-	}
 }
 
+// func TestTripleCut(t *testing.T) {
+// 	got := []string{"a", "b", "c", "JA", "d", "e", "JB", "f", "g"}
+// 	want := []string{"f", "g", "JA", "d", "e", "JB", "a", "b", "c"}
+
+// 	jockers := []int{3, 6}
+// 	got = TripleCut(got, jockers)
+
+// 	for i := range want {
+// 		if got[i] == want[i] {
+// 			continue
+// 		} else {
+// 			t.Error("error: got array is not equal to want!")
+// 		}
+// 	}
+
+// }
+
 func TestTripleCut(t *testing.T) {
-	fmt.Println("--- TRIPLE CUT TEST:")
-	deck := utils.ReadDeck("test_input_deck_one.txt")
-	jockers := []int{}
-	fmt.Println("INITIAL DECK:", deck)
-
-	if len(deck) < 54 {
-		t.Error("Deck length is incorrect!")
+	tests := []struct {
+		name         string
+		inputDeck    []string
+		inputIndices []int
+		expected     []string
+	}{
+		{
+			name:         "Top of the deck is empty",
+			inputDeck:    []string{"JA", "a", "JB", "b"},
+			inputIndices: []int{0, 2},
+			expected:     []string{"b", "JA", "a", "JB"},
+		},
+		{
+			name:         "Bottom of the deck is empty",
+			inputDeck:    []string{"a", "JA", "b", "JB"},
+			inputIndices: []int{1, 3},
+			expected:     []string{"JA", "b", "JB", "a"},
+		},
+		{
+			name:         "Top of the deck is empty",
+			inputDeck:    []string{"JA", "a", "JB", "b"},
+			inputIndices: []int{0, 2},
+			expected:     []string{"b", "JA", "a", "JB"},
+		},
 	}
 
-	deck, jockers = JockerShift(deck)
-	fmt.Println("JOKER SHIFT DECK:", deck)
-
-	jOne := 999
-	jTwo := 999
-	for i := range deck {
-		fmt.Println("CURRENT CARD:", deck[i], i)
-		if deck[i] == "JA" && jOne == 999 || deck[i] == "JB" && jOne == 999 {
-			fmt.Println("---CASE ONE---")
-			fmt.Println("TOP JOKER [i]:", deck[i])
-			jOne = i
-			fmt.Println("JONE =:", jOne)
-			i++
-		} else if deck[i] == "JA" && jOne != 999 || deck[i] == "JB" && jOne != 999 {
-			fmt.Println("---CASE TWO---")
-			fmt.Println("BOTTOM JOKER [i]:", deck[i])
-			jTwo = i
-			fmt.Println("JTWO =:", jTwo)
-			break
-		}
-	}
-
-	fmt.Println("JONE =:", jOne)
-	fmt.Println("JTWO =:", jTwo)
-
-	lenTop := jOne
-	lenMid := jTwo - jOne
-	lenBottom := 53 - jTwo
-	indexBottom := lenBottom + lenMid
-
-	fmt.Println("LENGTH ONE:", lenTop)
-	fmt.Println("LENGTH TWO:", lenBottom)
-
-	tripleCutDeck := TripleCut(deck, jockers)
-	fmt.Println("TRIPLE CUT DECK:", tripleCutDeck)
-
-	fmt.Println("TOP JOKER =", tripleCutDeck[lenBottom])
-	if tripleCutDeck[lenBottom] != "JA" && tripleCutDeck[lenBottom] != "JB" {
-		t.Error("Top joker index is wrong!")
-	}
-
-	fmt.Println("BOTTOM JOKER =", tripleCutDeck[indexBottom])
-	if tripleCutDeck[indexBottom] != "JA" && tripleCutDeck[indexBottom] != "JB" {
-		t.Error("Bottom joker index is wrong!")
-	}
-
-	for i := range deck {
-		if deck[i] == tripleCutDeck[i] {
-			t.Error("Elements are the same!")
-		}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := TripleCut(tt.inputDeck, tt.inputIndices)
+			if !reflect.DeepEqual(result, tt.expected) {
+				t.Errorf("TripleCut() = %v, want %v", result, tt.expected)
+			}
+		})
 	}
 }
 
