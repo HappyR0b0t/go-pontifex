@@ -1,7 +1,6 @@
 package deck_utils
 
 import (
-	"fmt"
 	"math/rand"
 	"strings"
 )
@@ -68,7 +67,7 @@ func DeckShuffle(deck map[string]int) []string {
 }
 
 // Moves Jocker to target position V1
-func MoveJockerV1(deckKeyes []string, current int, target int) []string {
+func MoveJocker(deckKeyes []string, current int, target int) []string {
 	for i := current; i > target; i-- {
 		deckKeyes[i-1], deckKeyes[i] = deckKeyes[i], deckKeyes[i-1]
 	}
@@ -130,8 +129,8 @@ func FindJocker(deck []string, jocker string) int {
 // MoveJockerA V2
 func MoveJockerA(deck []string, i int) ([]string, int) {
 	jockerIndex := 0
-	if i == 53 {
-		MoveJockerV1(deck, i, 0)
+	if i == len(deck)-1 {
+		MoveJocker(deck, i, 0)
 		jockerIndex = 1
 	} else {
 		deck[i], deck[i+1] = deck[i+1], deck[i]
@@ -142,11 +141,11 @@ func MoveJockerA(deck []string, i int) ([]string, int) {
 
 func MoveJockerB(deck []string, i int) ([]string, int) {
 	jockerIndex := 0
-	if i == 53 {
-		MoveJockerV1(deck, i, 2)
+	if i == len(deck)-1 {
+		MoveJocker(deck, i, 2)
 		jockerIndex = 2
-	} else if i == 52 {
-		MoveJockerV1(deck, i, 1)
+	} else if i == len(deck)-2 {
+		MoveJocker(deck, i, 1)
 		jockerIndex = 1
 	} else {
 		deck[i], deck[i+1], deck[i+2] = deck[i+1], deck[i+2], deck[i]
@@ -163,7 +162,7 @@ func JockerShift(deckKeyes []string) ([]string, []int) {
 
 	ja := FindJocker(deckKeyes, "JA")
 	// fmt.Println("JA INDEX BEFORE MOVE", ja)
-	deckKeyes, ja = MoveJockerA(deckKeyes, ja)
+	deckKeyes, _ = MoveJockerA(deckKeyes, ja)
 	// fmt.Println("JOCKER SHIFT JA DECK:", deckKeyes)
 	// fmt.Println("JA INDEX AFTER MOVE", ja)
 
@@ -206,11 +205,10 @@ func TripleCut(deckKeyes []string, jockers []int) []string {
 }
 
 // Performs a count cut on a deck
-func CountCut(tripleCutDeck []string) []string {
+func CountCut(tripleCutDeck []string, value int) []string {
 	// fmt.Println("--- COUNT CUT ---")
 
 	lastIndex := len(tripleCutDeck) - 1
-	value := cardToNumber(tripleCutDeck[lastIndex])
 
 	// fmt.Println("LAST CARD:", tripleCutDeck[lastIndex], "VALUE:", value)
 	// fmt.Println("INITIAL DECK --->", tripleCutDeck)
@@ -230,38 +228,33 @@ func CountCut(tripleCutDeck []string) []string {
 
 	// fmt.Println("RESULT DECK --->", countCutDeck, len(countCutDeck))
 
-	if countCutDeck[53] == "JA" || countCutDeck[53] == "JB" {
-		fmt.Println("COUNT CUT: JOCKER IS THE LAST CARD!", countCutDeck[53])
-	}
-
 	return countCutDeck
 }
 
 // Converts a card to number
 func cardToNumber(card string) int {
-	suitAndRank := strings.Split(card, "-")
-	if suitAndRank[0] == "JA" || suitAndRank[0] == "JB" {
-		number := 53
-		return number
+	if card == "JA" || card == "JB" {
+		return 53
 	} else {
-		number := suitsMap[suitAndRank[0]] + rankMap[suitAndRank[1]]
-		return number
+		suitAndRank := strings.Split(card, "-")
+		return suitsMap[suitAndRank[0]] + rankMap[suitAndRank[1]]
 	}
 }
 
 // Finds output card in a deck
 func FindOutput(tripleCutDeck []string) int {
-	number := cardToNumber(tripleCutDeck[0])
-	if number == 53 {
-		fmt.Println("")
-		fmt.Println("FIND OUTPUT: OUTPUT CARD IS A JOCKER!", tripleCutDeck[0], number)
-		fmt.Println("")
-		return 0
+	// number := cardToNumber(tripleCutDeck[0])
+	// if number == 53 {
+	// 	fmt.Println("")
+	// 	fmt.Println("FIND OUTPUT: OUTPUT CARD IS A JOCKER!", tripleCutDeck[0], number)
+	// 	fmt.Println("")
+	// 	return 0
+	// }
+	// outputNumber := cardToNumber(tripleCutDeck[number+1])
+	// return outputNumber
 
-	}
+	return cardToNumber(tripleCutDeck[0])
 
-	outputNumber := cardToNumber(tripleCutDeck[number+1])
-	return outputNumber
 }
 
 // Creates a keystream for conversion into chars
@@ -271,16 +264,19 @@ func KeyStream(textLength int, inputDeck *[]string) ([]string, []int) {
 	// i := 0
 	// KeyStreamRecusrsive(inputDeck, keyStream, numberedText, i)
 	var keyStream = &[]int{}
-	fmt.Println("KEYSTREAM GEN: TEXT LEN ==", textLength)
+	// fmt.Println("KEYSTREAM GEN: TEXT LEN ==", textLength)
 
 	for i := 0; i < textLength; {
-		fmt.Println("KEYSTREAM GEN: I ==", i)
+		// fmt.Println("KEYSTREAM GEN: I ==", i)
 		jockers := &[]int{}
+		lastIndex := len(*inputDeck) - 1
+
 		*inputDeck, *jockers = JockerShift(*inputDeck)
 		*inputDeck = TripleCut(*inputDeck, *jockers)
-		*inputDeck = CountCut(*inputDeck)
+		lastCardValue := cardToNumber((*inputDeck)[lastIndex])
+		*inputDeck = CountCut(*inputDeck, lastCardValue)
 		key := FindOutput(*inputDeck)
-		if key == 0 {
+		if key == 53 {
 			continue
 		}
 		*keyStream = append(*keyStream, key)
