@@ -72,6 +72,7 @@ var rank = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q
 
 func main() {
 
+	// Generate and write input_deck to *.txt file for further usage
 	deck := deck_utils.DeckGenerator(suit, rank)
 	deckKeyes := deck_utils.DeckShuffle(deck)
 	utils.WriteGeneratedDeck(deckKeyes, "input_deck.txt")
@@ -79,6 +80,10 @@ func main() {
 	// Generate and write test_deck to *.txt file
 	// testdeck := deck_utils.DeckArrayGenerator(suit, rank)
 	// utils.WriteGeneratedDeck(testdeck, "test_input_deck.txt")
+
+	// Reads and prints the plain text to terminal
+	plainText := utils.ReadText("input_text.txt")
+	fmt.Println("PLAIN TEXT =", plainText)
 
 	// Ciphers plaintext
 	cipheredText := CipherText(alphabet, inverseAlphabet)
