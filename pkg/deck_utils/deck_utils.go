@@ -30,18 +30,6 @@ var rankMap = map[string]int{
 	"JB": 53,
 }
 
-func DeckArrayGenerator(suit [4]string, rank [13]string) []string {
-	deck := []string{}
-	for i := range suit {
-		for j := range rank {
-			deck = append(deck, suit[i]+"-"+rank[j])
-		}
-	}
-	deck = append(deck, "JA")
-	deck = append(deck, "JB")
-	return deck
-}
-
 func DeckGenerator(suit [4]string, rank [13]string) map[string]int {
 	deck := map[string]int{}
 	k := 1

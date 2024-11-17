@@ -1,13 +1,11 @@
 package text_utils
 
 import (
-	"fmt"
 	"strings"
 )
 
 // Converts text to numbers
 func TextToNumber(text string, alphabet map[string]int) []int {
-	// text = strings.ToUpper(text)
 	text = strings.ReplaceAll(strings.ToUpper(text), " ", "")
 	numbers := []int{}
 	for i := range text {
@@ -23,7 +21,6 @@ func NumberToKey(numberedText []int, keyStream []int) []int {
 	m := 26
 	for i := range numberedText {
 		n := numberedText[i] + keyStream[i]
-		fmt.Println(numberedText[i], "+", keyStream[i], "==", (numberedText[i]+keyStream[i])%m)
 		if n%m == 0 {
 			keyes = append(keyes, 26)
 		} else {
@@ -46,7 +43,6 @@ func KeyToNumber(numberedText []int, keyStream []int) []int {
 			keyes = append(keyes, n)
 		}
 	}
-	fmt.Println("KEY TO NUMBER KEYES: ", keyes)
 	return keyes
 }
 

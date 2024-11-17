@@ -72,37 +72,30 @@ var rank = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q
 
 func main() {
 
-	// deck := deck_utils.DeckGenerator(suit, rank)
-	// deckKeyes := deck_utils.DeckShuffle(deck)
-	// utils.WriteGeneratedDeck(deckKeyes, "input_deck.txt")
+	deck := deck_utils.DeckGenerator(suit, rank)
+	deckKeyes := deck_utils.DeckShuffle(deck)
+	utils.WriteGeneratedDeck(deckKeyes, "input_deck.txt")
 
 	// Generate and write test_deck to *.txt file
-	testdeck := deck_utils.DeckArrayGenerator(suit, rank)
-	utils.WriteGeneratedDeck(testdeck, "test_input_deck.txt")
-
-	// plainText := utils.ReadText("input_text.txt")
+	// testdeck := deck_utils.DeckArrayGenerator(suit, rank)
+	// utils.WriteGeneratedDeck(testdeck, "test_input_deck.txt")
 
 	// Ciphers plaintext
 	cipheredText := CipherText(alphabet, inverseAlphabet)
-	fmt.Println("CIPHERED TEXT =", cipheredText)
 	utils.WriteText(cipheredText, "ciphered_text.txt")
+	fmt.Println("CIPHERED TEXT =", cipheredText)
 
+	// Decipheres ciphered text
 	decipheredText := DecipherText(cipheredText, alphabet)
 	utils.WriteText(decipheredText, "deciphered_text.txt")
-
 	fmt.Println("DECIPHERED TEXT =", decipheredText)
-	if decipheredText != "A BCDEF GHIJK LMNOP QRSTU VWXYZ" {
-		fmt.Println("DECIPHERED TEXT != INPUT TEXT!")
-	} else {
-		fmt.Println("DECIPHERED TEXT == INPUT TEXT!")
-	}
 
 }
 
 // A function to cipher provided text with provided deck
 func CipherText(alphabet map[string]int, inverseAlphabet map[int]string) string {
 	plainText := utils.ReadText("input_text.txt")
-	inputDeck := utils.ReadDeck("test_input_deck.txt")
+	inputDeck := utils.ReadDeck("input_deck.txt")
 
 	numberedText := text_utils.TextToNumber(plainText, alphabet)
 	var textLength int = len(numberedText)
@@ -115,7 +108,7 @@ func CipherText(alphabet map[string]int, inverseAlphabet map[int]string) string 
 
 // A function to decipher provided text with provided deck
 func DecipherText(cipheredText string, alphabet map[string]int) string {
-	inputDeck := utils.ReadDeck("test_input_deck.txt")
+	inputDeck := utils.ReadDeck("input_deck.txt")
 
 	numberedText := text_utils.TextToNumber(cipheredText, alphabet)
 	var textLength int = len(numberedText)
