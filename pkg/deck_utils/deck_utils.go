@@ -66,53 +66,13 @@ func DeckShuffle(deck map[string]int) []string {
 	return deckKeyes
 }
 
-// Moves Jocker to target position V1
+// Moves Jocker to target position
 func MoveJocker(deckKeyes []string, current int, target int) []string {
 	for i := current; i > target; i-- {
 		deckKeyes[i-1], deckKeyes[i] = deckKeyes[i], deckKeyes[i-1]
 	}
 	return deckKeyes
 }
-
-// Finds both Jokers and shifts them accordingly V1
-// TODO Return indexes of both Jokers
-// func JockerShiftV1(deckKeyes []string) []string {
-// 	shiftOne := 1
-// 	shiftTwo := 2
-// 	a := false
-// 	b := false
-// 	for i := 0; i < len(deckKeyes); i++ {
-// 		if a && b {
-// 			break
-// 		}
-// 		if deckKeyes[i] == "JA" && !a && i != 53 {
-// 			deckKeyes[i], deckKeyes[i+1] = deckKeyes[i+1], deckKeyes[i] // One function could be used. I guess
-// 			a = true
-// 			i = 0
-// 		} else if deckKeyes[len(deckKeyes)-1] == "JA" && !a {
-// 			MoveJocker(deckKeyes, shiftOne, shiftOne)
-// 			a = true
-// 			i = 0
-// 		}
-// 		if deckKeyes[i] == "JB" && !b && a {
-// 			deckKeyes[i], deckKeyes[i+1], deckKeyes[i+2] = deckKeyes[i+1], deckKeyes[i+2], deckKeyes[i]
-// 			b = true
-// 			i += 2
-// 		} else if deckKeyes[len(deckKeyes)-1] == "JB" && !b && a {
-// 			MoveJocker(deckKeyes, shiftOne, shiftTwo)
-// 			b = true
-// 			break
-// 		} else if deckKeyes[len(deckKeyes)-2] == "JB" && !b && a {
-// 			MoveJocker(deckKeyes, shiftTwo, shiftOne)
-// 			b = true
-// 			break
-// 		}
-// 	}
-// 	if deckKeyes[53] == "JA" || deckKeyes[53] == "JB" {
-// 		fmt.Println("JOCKER SHIFT: JOCKER IS THE LAST CARD!", deckKeyes[53])
-// 	}
-// 	return deckKeyes
-// }
 
 // Finds a jocker in a deck
 func FindJocker(deck []string, jocker string) int {
@@ -126,19 +86,20 @@ func FindJocker(deck []string, jocker string) int {
 	return jockerIndex
 }
 
-// MoveJockerA V2
+// Move Jocker A
 func MoveJockerA(deck []string, i int) ([]string, int) {
 	jockerIndex := 0
 	if i == len(deck)-1 {
-		MoveJocker(deck, i, 0)
+		MoveJocker(deck, i, 1)
 		jockerIndex = 1
 	} else {
-		deck[i], deck[i+1] = deck[i+1], deck[i]
+		MoveJocker(deck, i, i+1)
 		jockerIndex = i + 1
 	}
 	return deck, jockerIndex
 }
 
+// Move Jocker B
 func MoveJockerB(deck []string, i int) ([]string, int) {
 	jockerIndex := 0
 	if i == len(deck)-1 {
@@ -154,79 +115,47 @@ func MoveJockerB(deck []string, i int) ([]string, int) {
 	return deck, jockerIndex
 }
 
-// JockerShift V2
+// Shifts both jokers accordingly
 func JockerShift(deckKeyes []string) ([]string, []int) {
-	// fmt.Println("--- JOCKER SHIFT ---")
 	jockers := []int{}
-	// fmt.Println("JOCKER SHIFT INIT DECK:", deckKeyes)
-
 	ja := FindJocker(deckKeyes, "JA")
-	// fmt.Println("JA INDEX BEFORE MOVE", ja)
 	deckKeyes, _ = MoveJockerA(deckKeyes, ja)
-	// fmt.Println("JOCKER SHIFT JA DECK:", deckKeyes)
-	// fmt.Println("JA INDEX AFTER MOVE", ja)
-
 	jb := FindJocker(deckKeyes, "JB")
-	// fmt.Println("JB INDEX BEFORE MOVE", jb)
 	deckKeyes, jb = MoveJockerB(deckKeyes, jb)
-	// fmt.Println("JOCKER SHIFT JB DECK:", deckKeyes)
-	// fmt.Println("JB INDEX AFTER MOVE", jb)
-
 	ja = FindJocker(deckKeyes, "JA")
-
 	jockers = append(jockers, ja, jb)
 	if jockers[0] > jockers[1] {
 		jockers[0], jockers[1] = jockers[1], jockers[0]
 	}
-	// fmt.Println("JOCKERS", deckKeyes[jockers[0]], deckKeyes[jockers[1]])
 	return deckKeyes, jockers
 }
 
 // Performs a triple cut on a deck
 func TripleCut(deckKeyes []string, jockers []int) []string {
-	// fmt.Println("--- TRIPLE CUT ---")
-	// fmt.Println("INITIAL DECK --->", deckKeyes)
-	// fmt.Println("JOCKERS", jockers)
-
 	deck := []string{}
 	top := deckKeyes[:jockers[0]]
 	middle := deckKeyes[jockers[0] : jockers[1]+1]
 	bottom := deckKeyes[jockers[1]+1:]
 
-	// fmt.Println("TOP --->", top)
-	// fmt.Println("MID --->", middle)
-	// fmt.Println("BOTTOM --->", bottom)
-
 	deck = append(deck, bottom...)
 	deck = append(deck, middle...)
 	deck = append(deck, top...)
-	// fmt.Println("RESULT DECK --->", deck, len(deck))
+
 	return deck
 }
 
 // Performs a count cut on a deck
 func CountCut(tripleCutDeck []string, value int) []string {
-	// fmt.Println("--- COUNT CUT ---")
-
 	lastIndex := len(tripleCutDeck) - 1
-
-	// fmt.Println("LAST CARD:", tripleCutDeck[lastIndex], "VALUE:", value)
-	// fmt.Println("INITIAL DECK --->", tripleCutDeck)
 
 	top := tripleCutDeck[:value]
 	middle := tripleCutDeck[value:lastIndex]
 	bottom := tripleCutDeck[lastIndex]
 
-	// fmt.Println("TOP --->", top)
-	// fmt.Println("MID --->", middle)
-	// fmt.Println("BOTTOM --->", bottom)
-
 	countCutDeck := []string{}
 	countCutDeck = append(countCutDeck, middle...)
 	countCutDeck = append(countCutDeck, top...)
 	countCutDeck = append(countCutDeck, bottom)
-
-	// fmt.Println("RESULT DECK --->", countCutDeck, len(countCutDeck))
 
 	return countCutDeck
 }
@@ -243,31 +172,15 @@ func cardToNumber(card string) int {
 
 // Finds output card in a deck
 func FindOutput(tripleCutDeck []string) int {
-	// number := cardToNumber(tripleCutDeck[0])
-	// if number == 53 {
-	// 	fmt.Println("")
-	// 	fmt.Println("FIND OUTPUT: OUTPUT CARD IS A JOCKER!", tripleCutDeck[0], number)
-	// 	fmt.Println("")
-	// 	return 0
-	// }
-	// outputNumber := cardToNumber(tripleCutDeck[number+1])
-	// return outputNumber
-
 	return cardToNumber(tripleCutDeck[0])
 
 }
 
-// Creates a keystream for conversion into chars
+// Creates a keystream for conversion into chars non-recursively
 
-// Non-recursive of cipher/decipher process
 func KeyStream(textLength int, inputDeck *[]string) ([]string, []int) {
-	// i := 0
-	// KeyStreamRecusrsive(inputDeck, keyStream, numberedText, i)
 	var keyStream = &[]int{}
-	// fmt.Println("KEYSTREAM GEN: TEXT LEN ==", textLength)
-
 	for i := 0; i < textLength; {
-		// fmt.Println("KEYSTREAM GEN: I ==", i)
 		jockers := &[]int{}
 		lastIndex := len(*inputDeck) - 1
 

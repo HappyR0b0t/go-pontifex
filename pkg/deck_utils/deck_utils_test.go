@@ -167,15 +167,15 @@ func TestMoveJockerB(t *testing.T) {
 			inputDeck:     []string{"a", "b", "c", "JB", "JA", "d", "e"},
 			inputIndex:    3,
 			expectedDeck:  []string{"a", "b", "c", "JA", "d", "JB", "e"},
-			expectedIndex: 4,
+			expectedIndex: 5,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, resultIndex := MoveJockerB(tt.inputDeck, tt.inputIndex)
-			if !reflect.DeepEqual(result, tt.expectedDeck) && !reflect.DeepEqual(resultIndex, tt.expectedIndex) {
-				t.Errorf("FindJocker() = %v, want %v", result, tt.expectedDeck)
+			resultDeck, resultIndex := MoveJockerB(tt.inputDeck, tt.inputIndex)
+			if !reflect.DeepEqual(resultDeck, tt.expectedDeck) || !reflect.DeepEqual(resultIndex, tt.expectedIndex) {
+				t.Errorf("FindJocker() = %v, result index = %v, want %v, wanted index is %v", resultDeck, resultIndex, tt.expectedDeck, tt.expectedIndex)
 			}
 		})
 	}
