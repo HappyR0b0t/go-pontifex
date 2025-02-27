@@ -4,13 +4,23 @@ import (
 	"strings"
 )
 
+// func NumberToString(nums []int) string {
+// 	result := ""
+// var c int = 64
+// for _, val := range nums {
+// 	// fmt.Println(int(val), "<- current val")
+// 	result += string(val + c)
+// }
+// return result
+// }
+
 // Converts text to numbers
-func TextToNumber(text string, alphabet map[string]int) []int {
+func TextToNumber(text string) []int {
 	text = strings.ReplaceAll(strings.ToUpper(text), " ", "")
 	numbers := []int{}
-	for i := range text {
-		value := alphabet[string(text[i])]
-		numbers = append(numbers, value)
+	var c int = 64
+	for _, val := range []byte(text) {
+		numbers = append(numbers, int(val)-c)
 	}
 	return numbers
 }
@@ -46,15 +56,16 @@ func KeyToNumber(numberedText []int, keyStream []int) []int {
 	return keyes
 }
 
-// Converts keys from the keystream to chars
-func KeyToText(keyes []int, inverseAlphabet map[int]string) string {
+// V2 Converts keys from the keystream to chars
+func KeyToText(keyes []int) string {
 	var text string
-	for i := range keyes {
-		key := inverseAlphabet[keyes[i]]
+	var c int = 64
+	for i, val := range keyes {
+		// fmt.Println(int(val), "<- current val")
 		if i%5 == 0 && i > 4 {
 			text += " "
 		}
-		text += key
+		text += string(byte(val + c))
 	}
 	return text
 }
