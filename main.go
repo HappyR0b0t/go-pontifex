@@ -17,20 +17,20 @@ var rank = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q
 
 // A struct for response parsing
 type CipherResponse struct {
-	Answer string `json:"answer"`
-	Deck   string `json:"deck"`
+	Answer string   `json:"answer"`
+	Deck   []string `json:"deck"`
 }
 
 // A struct for request parsing
 type CipherRequest struct {
-	Message string `json:"message"`
-	Deck    string `json:"deck"`
+	Message string   `json:"message"`
+	Deck    []string `json:"deck"`
 }
 
 // A handler for index page
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	file, err := os.Open("./index.html")
+	file, err := os.Open("./static/index.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -55,7 +55,7 @@ func cipherHandler(w http.ResponseWriter, r *http.Request) {
 	// Устанавливаем заголовок ответа как JSON
 	w.Header().Set("Content-Type", "application/json")
 	// Формируем ответ
-	resp := CipherResponse{Answer: cipherTextAnswer, Deck: cipherTextAnswer}
+	resp := CipherResponse{Answer: cipherTextAnswer, Deck: inputData.Deck}
 
 	// Отправляем JSON-ответ
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
