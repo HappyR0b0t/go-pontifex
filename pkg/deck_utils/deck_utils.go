@@ -46,20 +46,20 @@ func DeckGenerator(suit [4]string, rank [13]string) map[string]int {
 
 // Shuffles the deck `randomly`
 func DeckShuffle(deck map[string]int) []string {
-	deckKeyes := []string{}
+	deckKeys := []string{}
 	for k := range deck {
-		deckKeyes = append(deckKeyes, k)
+		deckKeys = append(deckKeys, k)
 	}
-	rand.Shuffle(len(deckKeyes), func(i, j int) { deckKeyes[i], deckKeyes[j] = deckKeyes[j], deckKeyes[i] })
-	return deckKeyes
+	rand.Shuffle(len(deckKeys), func(i, j int) { deckKeys[i], deckKeys[j] = deckKeys[j], deckKeys[i] })
+	return deckKeys
 }
 
 // Moves Jocker to target position
-func MoveJocker(deckKeyes []string, current int, target int) []string {
+func MoveJocker(deckKeys []string, current int, target int) []string {
 	for i := current; i > target; i-- {
-		deckKeyes[i-1], deckKeyes[i] = deckKeyes[i], deckKeyes[i-1]
+		deckKeys[i-1], deckKeys[i] = deckKeys[i], deckKeys[i-1]
 	}
-	return deckKeyes
+	return deckKeys
 }
 
 // Finds a jocker in a deck
@@ -104,26 +104,26 @@ func MoveJockerB(deck []string, i int) ([]string, int) {
 }
 
 // Shifts both jokers accordingly
-func JockerShift(deckKeyes []string) ([]string, []int) {
+func JockerShift(deckKeys []string) ([]string, []int) {
 	jockers := []int{}
-	ja := FindJocker(deckKeyes, "JA")
-	deckKeyes, _ = MoveJockerA(deckKeyes, ja)
-	jb := FindJocker(deckKeyes, "JB")
-	deckKeyes, jb = MoveJockerB(deckKeyes, jb)
-	ja = FindJocker(deckKeyes, "JA")
+	ja := FindJocker(deckKeys, "JA")
+	deckKeys, _ = MoveJockerA(deckKeys, ja)
+	jb := FindJocker(deckKeys, "JB")
+	deckKeys, jb = MoveJockerB(deckKeys, jb)
+	ja = FindJocker(deckKeys, "JA")
 	jockers = append(jockers, ja, jb)
 	if jockers[0] > jockers[1] {
 		jockers[0], jockers[1] = jockers[1], jockers[0]
 	}
-	return deckKeyes, jockers
+	return deckKeys, jockers
 }
 
 // Performs a triple cut on a deck
-func TripleCut(deckKeyes []string, jockers []int) []string {
+func TripleCut(deckKeys []string, jockers []int) []string {
 	deck := []string{}
-	top := deckKeyes[:jockers[0]]
-	middle := deckKeyes[jockers[0] : jockers[1]+1]
-	bottom := deckKeyes[jockers[1]+1:]
+	top := deckKeys[:jockers[0]]
+	middle := deckKeys[jockers[0] : jockers[1]+1]
+	bottom := deckKeys[jockers[1]+1:]
 
 	deck = append(deck, bottom...)
 	deck = append(deck, middle...)
