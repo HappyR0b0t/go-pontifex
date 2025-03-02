@@ -8,21 +8,32 @@ import (
 
 	"example.com/go-pontifex/pkg/deck_utils"
 	"example.com/go-pontifex/pkg/text_utils"
-	"example.com/go-pontifex/pkg/utils"
 )
 
 var suit = [4]string{"clubs", "diamonds", "hearts", "spades"}
 
 var rank = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
 
-// A struct for response parsing
+// A struct for response parsing at /cipher
 type CipherResponse struct {
-	Answer string   `json:"answer"`
-	Deck   []string `json:"deck"`
+	Answer string    `json:"answer"`
+	Deck   *[]string `json:"deck"`
 }
 
-// A struct for request parsing
+// A struct for request parsing at /cipher
 type CipherRequest struct {
+	Message string   `json:"message"`
+	Deck    []string `json:"deck"`
+}
+
+// A struct for response parsing at /decipher
+type DecipherResponse struct {
+	Answer string    `json:"answer"`
+	Deck   *[]string `json:"deck"`
+}
+
+// A struct for request parsing at /decipher
+type DecipherRequest struct {
 	Message string   `json:"message"`
 	Deck    []string `json:"deck"`
 }
@@ -51,11 +62,42 @@ func cipherHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Ошибка декодирования JSON: "+err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	initialDeck := make([]string, len(inputData.Deck))
+	copy(initialDeck, inputData.Deck)
+
 	var cipherTextAnswer = CipherText(inputData.Message, inputData.Deck)
+
 	// Устанавливаем заголовок ответа как JSON
 	w.Header().Set("Content-Type", "application/json")
+
 	// Формируем ответ
-	resp := CipherResponse{Answer: cipherTextAnswer, Deck: inputData.Deck}
+	resp := CipherResponse{Answer: cipherTextAnswer, Deck: &initialDeck}
+
+	// Отправляем JSON-ответ
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// A handler for /decipher page
+func decipherHandler(w http.ResponseWriter, r *http.Request) {
+	var inputData DecipherRequest
+	if err := json.NewDecoder(r.Body).Decode(&inputData); err != nil {
+		http.Error(w, "Ошибка декодирования JSON: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	initialDeck := make([]string, len(inputData.Deck))
+	copy(initialDeck, inputData.Deck)
+
+	var cipherTextAnswer = DecipherText(inputData.Message, inputData.Deck)
+
+	// Устанавливаем заголовок ответа как JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Формируем ответ
+	resp := DecipherResponse{Answer: cipherTextAnswer, Deck: &initialDeck}
 
 	// Отправляем JSON-ответ
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
@@ -90,6 +132,7 @@ func main() {
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/cipher", cipherHandler)
+	http.HandleFunc("/decipher", decipherHandler)
 
 	log.Println("Server is running on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
@@ -113,8 +156,8 @@ func CipherText(plainText string, inputDeck []string) string {
 }
 
 // A function to decipher provided text with provided deck
-func DecipherText(cipheredText string) string {
-	inputDeck := utils.ReadDeck("input_deck.txt")
+func DecipherText(cipheredText string, inputDeck []string) string {
+	// inputDeck := utils.ReadDeck("input_deck.txt")
 
 	numberedText := text_utils.TextToNumber(cipheredText)
 	var textLength int = len(numberedText)
