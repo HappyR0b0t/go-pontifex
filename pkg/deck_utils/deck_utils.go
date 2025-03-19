@@ -30,28 +30,22 @@ var rankMap = map[string]int{
 	"JB": 53,
 }
 
-func DeckGenerator(suit [4]string, rank [13]string) map[string]int {
-	deck := map[string]int{}
-	k := 1
+func DeckGenerator(suit [4]string, rank [13]string) []string {
+	deck := []string{}
 	for i := range suit {
 		for j := range rank {
-			deck[suit[i]+"-"+rank[j]] = k
-			k++
+			deck = append(deck, suit[i]+"-"+rank[j])
 		}
 	}
-	deck["JA"] = 53
-	deck["JB"] = 53
+	deck = append(deck, "JA")
+	deck = append(deck, "JB")
 	return deck
 }
 
 // Shuffles the deck `randomly`
-func DeckShuffle(deck map[string]int) []string {
-	deckKeys := []string{}
-	for k := range deck {
-		deckKeys = append(deckKeys, k)
-	}
-	rand.Shuffle(len(deckKeys), func(i, j int) { deckKeys[i], deckKeys[j] = deckKeys[j], deckKeys[i] })
-	return deckKeys
+func DeckShuffle(deck []string) []string {
+	rand.Shuffle(len(deck), func(i, j int) { deck[i], deck[j] = deck[j], deck[i] })
+	return deck
 }
 
 // Moves Jocker to target position

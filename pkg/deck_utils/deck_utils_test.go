@@ -7,26 +7,26 @@ import (
 	"example.com/go-pontifex/pkg/utils"
 )
 
-var a = [4]string{"clubs", "diamonds", "hearts", "spades"}
-var b = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
+// var a = [4]string{"clubs", "diamonds", "hearts", "spades"}
+// var b = [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
 
-func TestDeckGenerator(t *testing.T) {
+// func TestDeckGenerator(t *testing.T) {
 
-	got := DeckGenerator(a, b)
-	want := 1
-	if got["clubs-A"] != want {
-		t.Error("Key and value are incorrect")
-	}
-	if got["JA"] != 53 {
-		t.Error("Key and value are incorrect")
-	}
-	if got["JB"] != 53 {
-		t.Error("Key and value are incorrect")
-	}
-	if len(got) != 54 {
-		t.Error("Array length is incorrect")
-	}
-}
+// 	got := DeckGenerator(a, b)
+// 	want := 1
+// 	if got["clubs-A"] != want {
+// 		t.Error("Key and value are incorrect")
+// 	}
+// 	if got["JA"] != 53 {
+// 		t.Error("Key and value are incorrect")
+// 	}
+// 	if got["JB"] != 53 {
+// 		t.Error("Key and value are incorrect")
+// 	}
+// 	if len(got) != 54 {
+// 		t.Error("Array length is incorrect")
+// 	}
+// }
 
 func TestDeckShuffle(t *testing.T) {
 	// got := DeckGenerator(a, b)

@@ -28,8 +28,8 @@ type CipherRequest struct {
 
 // A struct for response parsing at /decipher
 type DecipherResponse struct {
-	Answer string    `json:"answer"`
-	Deck   *[]string `json:"deck"`
+	Answer string   `json:"answer"`
+	Deck   []string `json:"deck"`
 }
 
 // A struct for request parsing at /decipher
@@ -57,10 +57,25 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 // A handler for /cipher page
 func cipherHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Неверный метод", http.StatusBadRequest)
+		return
+	}
+
 	var inputData CipherRequest
+
 	if err := json.NewDecoder(r.Body).Decode(&inputData); err != nil {
 		http.Error(w, "Ошибка декодирования JSON: "+err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	if len(inputData.Message) == 0 {
+		http.Error(w, "Запрос не содержит сообщения", http.StatusBadRequest)
+		return
+	}
+
+	if len(inputData.Deck) == 0 {
+		inputData.Deck = deck_utils.DeckGenerator(suit, rank)
 	}
 
 	initialDeck := make([]string, len(inputData.Deck))
@@ -82,9 +97,25 @@ func cipherHandler(w http.ResponseWriter, r *http.Request) {
 
 // A handler for /decipher page
 func decipherHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Неверный метод", http.StatusBadRequest)
+		return
+	}
+
 	var inputData DecipherRequest
+
 	if err := json.NewDecoder(r.Body).Decode(&inputData); err != nil {
 		http.Error(w, "Ошибка декодирования JSON: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if len(inputData.Message) == 0 {
+		http.Error(w, "Запрос не содержит сообщения", http.StatusBadRequest)
+		return
+	}
+
+	if len(inputData.Deck) == 0 {
+		http.Error(w, "Запрос не содержит колоду", http.StatusBadRequest)
 		return
 	}
 
@@ -97,7 +128,7 @@ func decipherHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Формируем ответ
-	resp := DecipherResponse{Answer: cipherTextAnswer, Deck: &initialDeck}
+	resp := DecipherResponse{Answer: cipherTextAnswer, Deck: initialDeck}
 
 	// Отправляем JSON-ответ
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
