@@ -38,6 +38,11 @@ type DecipherRequest struct {
 	Deck    []string `json:"deck"`
 }
 
+// A struct for request parsing at /generate
+type GenerateDeckResponse struct {
+	Deck []string `json:"deck"`
+}
+
 // A handler for index page
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
@@ -58,7 +63,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 // A handler for /cipher page
 func cipherHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Неверный метод", http.StatusBadRequest)
+		http.Error(w, "Неверный метод", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -98,7 +103,7 @@ func cipherHandler(w http.ResponseWriter, r *http.Request) {
 // A handler for /decipher page
 func decipherHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Неверный метод", http.StatusBadRequest)
+		http.Error(w, "Неверный метод", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -133,6 +138,13 @@ func decipherHandler(w http.ResponseWriter, r *http.Request) {
 	// Отправляем JSON-ответ
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func GenerateDeckHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Неверный метод", http.StatusMethodNotAllowed)
+		return
 	}
 }
 
