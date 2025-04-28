@@ -141,10 +141,21 @@ func decipherHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GenerateDeckHandler(w http.ResponseWriter, r *http.Request) {
+// A handler for /generate page
+func generateDeckHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Неверный метод", http.StatusMethodNotAllowed)
 		return
+	}
+	var outputData GenerateDeckResponse
+	outputData.Deck = deck_utils.DeckGenerator(suit, rank)
+
+	w.Header().Set("Content-Type", "application/json")
+
+	resp := GenerateDeckResponse{Deck: outputData.Deck}
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -176,6 +187,7 @@ func main() {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/cipher", cipherHandler)
 	http.HandleFunc("/decipher", decipherHandler)
+	http.HandleFunc("/generate", generateDeckHandler)
 
 	log.Println("Server is running on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
