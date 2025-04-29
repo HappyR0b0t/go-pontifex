@@ -80,7 +80,7 @@ func cipherHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(inputData.Deck) == 0 {
-		inputData.Deck = deck_utils.DeckGenerator(suit, rank)
+		inputData.Deck = deck_utils.DeckShuffle(deck_utils.DeckGenerator(suit, rank))
 	}
 
 	initialDeck := make([]string, len(inputData.Deck))
@@ -148,7 +148,7 @@ func generateDeckHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var outputData GenerateDeckResponse
-	outputData.Deck = deck_utils.DeckGenerator(suit, rank)
+	outputData.Deck = deck_utils.DeckShuffle(deck_utils.DeckGenerator(suit, rank))
 
 	w.Header().Set("Content-Type", "application/json")
 
